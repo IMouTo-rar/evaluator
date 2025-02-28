@@ -2,7 +2,9 @@
     width: 100%;
     height: auto;
     background-color: whitesmoke;
-    padding: var(--rerank-rank-padding) 4rem;
+    padding-left: 4rem;
+
+    transition: all 0.5s ease-in-out;
 }
 
 .rank.draggedOver {
@@ -11,7 +13,7 @@
 
 .rank.mid {
     background-color: #f0f0f0;
-    height: 0.5rem;
+    height: 1.5rem;
 }
 
 .rank.mid.rank.draggedOver {
@@ -19,8 +21,15 @@
     filter: blur(0.5);
 }
 
+.rank.header {
+    height: 2rem;
+}
+
+.rank.footer {
+    height: 3.5rem;
+}
+
 .rankList {
-    --grid-size: calc(var(--rerank-item-size) + var(--rerank-rank-padding));
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(var(--grid-size), var(--grid-size)));
+    grid-template-columns: repeat(auto-fill, minmax(var(--item-grid), var(--item-grid)));
 }

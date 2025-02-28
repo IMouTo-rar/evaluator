@@ -1,12 +1,25 @@
 .item {
-    width: var(--rerank-item-size);
-    height: var(--rerank-item-size);
-    padding: 10px;
-    background-color: #f0f0f0;
-    border-radius: 1rem; 
+    width: var(--item-grid);
+    height: var(--item-grid);
+    padding: 0.5rem;
+    background-color: transparent;
     position: relative;
 }
 
+.item.dragOver {
+    filter: brightness(105%);
+}
+
 .item.dragging {
-    visibility: hidden;
+    opacity: 0.5;
+}
+
+.item .image {
+    width: var(--item-content);
+    height: var(--item-content);
+
+    padding: 10px;
+
+    background-color: #f0f0f0;
+    border-radius: 2rem;
 }

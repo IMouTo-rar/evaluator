@@ -11,9 +11,10 @@ interface RerankRankProps {
   rank: number;
   items: Item[];
   isMid?: boolean;
+  section?: "header" | "body" | "footer";
 }
 
-export default function RerankRank({ rank, items, isMid=false }: RerankRankProps) {
+export default function RerankRank({ rank, items, isMid=false, section="body" }: RerankRankProps) {
   const rankRef = useRef<HTMLDivElement | null>(null);
   const [isDraggedOver, setIsDraggedOver] = useState(false);
 
@@ -39,6 +40,8 @@ export default function RerankRank({ rank, items, isMid=false }: RerankRankProps
     {
       [styles.draggedOver]: isDraggedOver,
       [styles.mid]: isMid,
+      [styles.header]: section === "header",
+      [styles.footer]: section === "footer",
     }
   );
 

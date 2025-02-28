@@ -96,13 +96,23 @@ export default function RerankTable() {
 
   return (
     <div className={styles.table} ref={tableRef}>
-      <div>
-        <RerankRank rank={0} items={[]} isMid={true} />
-      </div>
       {rerankList.map((item, index) => (
         <div key={index}>
+          {/* header */}
+          {index === 0 && (
+            <RerankRank rank={0} items={[]} isMid={true} section='header'/>
+          )}
+
+          {/* body */}
           <RerankRank rank={index} items={item} />
-          <RerankRank rank={index + 1} items={[]} isMid={true} />
+          {index < rerankList.length - 1 && (
+            <RerankRank rank={index + 1} items={[]} isMid={true} />
+          )}
+          
+          {/* footer */}
+          {index === rerankList.length - 1 && (
+            <RerankRank rank={index + 1} items={[]} isMid={true} section='footer'/>
+          )}
         </div>
       ))}
     </div>

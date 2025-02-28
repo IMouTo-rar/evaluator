@@ -1,8 +1,10 @@
 :root {
-    --rerank-rank-gap: 1rem;
-    --rerank-rank-padding: 1rem;
+    --rank-gap: 1rem;
+    --rank-padding: 1rem;
+    --rank-height: 12rem;
 
-    --rerank-item-size: 10rem;
+    --item-grid: 10rem;
+    --item-content: 9rem
 }
 
 .table {
@@ -11,4 +13,5 @@
 
     display: grid;
     grid-auto-flow: row dense;
+    grid-auto-rows: max-content;
 }

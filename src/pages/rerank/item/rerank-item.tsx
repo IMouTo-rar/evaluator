@@ -2,6 +2,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import styles from './rerank-item.module.css';
 import invariant from 'tiny-invariant';
+import classNames from 'classnames';
+
 import { draggable, dropTargetForElements } from '@atlaskit/pragmatic-drag-and-drop/element/adapter';
 import { DropIndicator } from '@atlaskit/pragmatic-drag-and-drop-react-drop-indicator/box';
 import { combine } from '@atlaskit/pragmatic-drag-and-drop/combine';
@@ -32,7 +34,7 @@ export default function RerankItem({ data }: RerankItemProps) {
   const { rank, index, item } = data;
 
   const itemRef = useRef(null);
-  const [dragging, setDragging] = useState<boolean>(false);
+  const [state, setState] = useState<'idle' | 'dragging' | 'dragOver'>('idle');
   const [closestEdge, setClosestEdge] = useState<Edge | null>(null);
 
   useEffect(() => {
@@ -47,13 +49,13 @@ export default function RerankItem({ data }: RerankItemProps) {
           rank: rank,
           index: index,
         }),
-        onDragStart: () => setDragging(true),
-        onDrop: () => setDragging(false),
+        onDragStart: () => setState('dragging'),
+        onDrop: () => setState('idle'),
       }),
       dropTargetForElements({
         element: el,
         canDrop: ({ source }) => {
-          return source.data.type === 'item';
+          return source.data.type === 'item' && state !== 'dragging';
         },
         getIsSticky: () => true,
         getData: ({ input, element }) => {
@@ -71,6 +73,7 @@ export default function RerankItem({ data }: RerankItemProps) {
           });
         },
         onDragEnter: (args) => {
+          setState('dragOver');
           if (args.source.data.rank !== rank || args.source.data.index !== index) {
             setClosestEdge(extractClosestEdge(args.self.data));
           }
@@ -81,23 +84,39 @@ export default function RerankItem({ data }: RerankItemProps) {
           }
         },
         onDragLeave: () => {
+          if (state === 'dragOver') {
+            setState('idle');
+          }
           setClosestEdge(null);
         },
         onDrop: () => {
+          setState('idle');
           setClosestEdge(null);
         },
       }),
     );
-  }, [rank, index, item]);
+  }, [rank, index, item, state]);
+
+  const classes = classNames(
+    styles.item,
+    {
+      [styles.dragging]: state === 'dragging',
+      [styles.dragOver]: state === 'dragOver',
+    }
+  )
 
   return (
     <div
-      className={`${styles.item} ${dragging ? styles.dragging : ''}`}
+      className={classes}
       ref={itemRef}
     >
-      {item.file_name}<br />
-      {item.score}
-      {closestEdge && <DropIndicator edge={closestEdge} gap='1rem'/>}
+      <div className={styles.image}>
+        {item.file_name}<br />
+        {item.score}
+        
+      </div>
+      {closestEdge && <DropIndicator edge={closestEdge} />}
     </div>
+
   );
 }
