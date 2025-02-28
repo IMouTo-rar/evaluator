@@ -1,8 +1,9 @@
 .item {
-    width: 4rem;
-    padding: 10px; /* 假设 space.100 代表 10px */
-    background-color: #f0f0f0; /* 假设 elevation.surface 是一种浅灰色 */
-    border-radius: 8px; /* 假设 border.radius.200 代表 8px 的圆角半径 */
+    width: var(--rerank-item-size);
+    height: var(--rerank-item-size);
+    padding: 10px;
+    background-color: #f0f0f0;
+    border-radius: 1rem; 
     position: relative;
 }
 

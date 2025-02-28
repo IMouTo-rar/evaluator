@@ -61,6 +61,7 @@ export default function RerankItem({ data }: RerankItemProps) {
             type: 'item',
             rank: rank,
             index: index,
+            item: item,
           };
 
           return attachClosestEdge(data, {
@@ -87,7 +88,7 @@ export default function RerankItem({ data }: RerankItemProps) {
         },
       }),
     );
-  }, [rank, index]);
+  }, [rank, index, item]);
 
   return (
     <div
