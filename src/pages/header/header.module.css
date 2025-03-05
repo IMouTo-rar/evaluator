@@ -1,0 +1,38 @@
+.header {
+    --header-height: 3rem;
+
+    height: var(--header-height);
+    width: 100%;
+    
+    background-color: #f0f0f0;
+    padding-left: 2rem;
+
+    display: grid;
+    grid-template-columns: repeat(12, 8rem);
+}
+
+.title {
+    height: var(--header-height);
+    width: 100%;
+
+    font-weight: bold;
+    
+    display: flex;
+    align-items: center;
+    font-size: 1.2rem;
+}
+
+.links {
+    height: var(--header-height);
+    width: 100%;
+    
+    color: grey;
+    font-weight: bold;
+    font-style: italic;
+
+    display: flex;
+    align-items: center;
+
+    cursor: pointer;
+    user-select: none;
+}

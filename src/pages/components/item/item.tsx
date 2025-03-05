@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useRef, useState } from 'react';
-import styles from './rerank-item.module.css';
+import ReactDOM from 'react-dom';
+import styles from './item.module.css';
 import invariant from 'tiny-invariant';
 import classNames from 'classnames';
 
@@ -12,29 +13,26 @@ import {
   Edge,
   extractClosestEdge,
 } from '@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge';
+import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/set-custom-native-drag-preview";
+import { preserveOffsetOnSource } from '@atlaskit/pragmatic-drag-and-drop/element/preserve-offset-on-source';
 
-export type Item = {
-  id?: string;
-  file_name: string;
-  query: string;
-  score?: number;
-  timestamp?: string;
-  tag?: string;
-}
+import Media from '@/pages/components/media/media';
+import { Item as ItemType } from '@/pages/components/types/types';
 
-interface RerankItemProps {
+interface ItemProps {
   data: {
-    rank: number;
+    level: number;
     index: number;
-    item: Item;
+    item: ItemType;
   }
 }
 
-export default function RerankItem({ data }: RerankItemProps) {
-  const { rank, index, item } = data;
+export default function Item({ data }: ItemProps) {
+  const { level, index, item } = data;
 
   const itemRef = useRef(null);
-  const [state, setState] = useState<'idle' | 'dragging' | 'dragOver'>('idle');
+  const [state, setState] = useState<'idle' | 'dragging' | 'dragOver' | 'prewview'>('idle');
+  const [container, setContainer] = useState<HTMLElement | null>(null);
   const [closestEdge, setClosestEdge] = useState<Edge | null>(null);
 
   useEffect(() => {
@@ -46,10 +44,24 @@ export default function RerankItem({ data }: RerankItemProps) {
         element: el,
         getInitialData: () => ({
           type: 'item',
-          rank: rank,
+          level: level,
           index: index,
         }),
         onDragStart: () => setState('dragging'),
+        onGenerateDragPreview: ({ nativeSetDragImage, location, source }) => {
+          setCustomNativeDragPreview({
+            getOffset: preserveOffsetOnSource({
+              element: source.element,
+              input: location.current.input,
+          }),
+            render({ container }) {
+              setState('prewview');
+              setContainer(container);
+              return () => setState('idle');
+            },
+            nativeSetDragImage,
+          })
+        },
         onDrop: () => setState('idle'),
       }),
       dropTargetForElements({
@@ -61,7 +73,7 @@ export default function RerankItem({ data }: RerankItemProps) {
         getData: ({ input, element }) => {
           const data = {
             type: 'item',
-            rank: rank,
+            level: level,
             index: index,
             item: item,
           };
@@ -74,12 +86,12 @@ export default function RerankItem({ data }: RerankItemProps) {
         },
         onDragEnter: (args) => {
           setState('dragOver');
-          if (args.source.data.rank !== rank || args.source.data.index !== index) {
+          if (args.source.data.level !== level || args.source.data.index !== index) {
             setClosestEdge(extractClosestEdge(args.self.data));
           }
         },
         onDrag: (args) => {
-          if (args.source.data.rank !== rank || args.source.data.index !== index) {
+          if (args.source.data.level !== level || args.source.data.index !== index) {
             setClosestEdge(extractClosestEdge(args.self.data));
           }
         },
@@ -95,7 +107,7 @@ export default function RerankItem({ data }: RerankItemProps) {
         },
       }),
     );
-  }, [rank, index, item, state]);
+  }, [level, index, item, state]);
 
   const classes = classNames(
     styles.item,
@@ -110,11 +122,17 @@ export default function RerankItem({ data }: RerankItemProps) {
       className={classes}
       ref={itemRef}
     >
-      <div className={styles.image}>
-        {item.file_name}<br />
-        {item.score}
-        
+      <div className={styles.info}>
+        ...
       </div>
+      <div className={styles.image}>
+        <Media name={item.filename} type={item.domain}/>
+      </div>
+      {state === 'prewview' && container && ReactDOM.createPortal(
+        <div className={classNames(styles.image, styles.preview)}>
+          <Media name={item.filename} type={item.domain}/>
+        </div>,
+        container)}
       {closestEdge && <DropIndicator edge={closestEdge} />}
     </div>
 

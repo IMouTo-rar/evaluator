@@ -1,0 +1,48 @@
+.item {
+    width: var(--item-width);
+    height: var(--item-height);
+    padding: 0 var(--item-padding);
+    background-color: transparent;
+    position: relative;
+}
+
+.item .info {
+    position: absolute;
+    width: 2rem;
+    height: 2rem;
+    top: 0.5rem;
+    right: 1.5rem;
+    border-radius: 2rem;
+    background-color: whitesmoke;
+    padding: 0.2rem 0.5rem 0.5rem 0.6rem;
+    z-index: 1000;
+
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.item.dragOver {
+    filter: brightness(105%);
+}
+
+.item.dragging {
+    opacity: 0.5;
+}
+
+.item .image {
+    width: var(--item-content);
+    height: var(--item-content);
+
+    background-color: #f0f0f0;
+    border-radius: var(--item-radius);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.item .image.prewiew {
+    position: absolute;
+    top: -40px;
+    left: -40px;
+}

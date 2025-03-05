@@ -1,6 +1,16 @@
 :root {
-  --background: #ffffff;
+  --background: #f0f0f0;
   --foreground: #171717;
+
+  --rank-gap: 1rem;
+  --rank-padding: 1rem;
+
+  --item-grid: 12rem;
+  --item-width: 12rem;
+  --item-height: 10rem;
+  --item-radius: 1.5rem;
+  --item-padding: 1rem;
+  --item-content: 10rem;
 }
 
 /* @media (prefers-color-scheme: dark) {

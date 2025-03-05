@@ -1,20 +1,19 @@
 "use client";
 import React, { useEffect, useRef, useState } from 'react';
-import styles from './rerank-rank.module.css';
+import styles from './filter.module.css';
 import invariant from 'tiny-invariant';
 import { dropTargetForElements } from '@atlaskit/pragmatic-drag-and-drop/element/adapter';
 
-import RerankItem, { Item } from '../item/rerank-item';
+import Item from '../../components/item/item';
+import { Item as ItemType } from '../../components/types/types';
 import classNames from 'classnames';
 
-interface RerankRankProps {
-  rank: number;
-  items: Item[];
-  isMid?: boolean;
-  section?: "header" | "body" | "footer";
+interface Filter {
+  items: ItemType[];
+  relevant?: boolean;
 }
 
-export default function RerankRank({ rank, items, isMid=false, section="body" }: RerankRankProps) {
+export default function Filter({ items, relevant=false }: Filter) {
   const rankRef = useRef<HTMLDivElement | null>(null);
   const [isDraggedOver, setIsDraggedOver] = useState(false);
 
@@ -25,23 +24,22 @@ export default function RerankRank({ rank, items, isMid=false, section="body" }:
     return dropTargetForElements({
       element: el,
       getData: () => ({
-        type: 'rank',
-        rank: rank,
-        isMid: isMid
+        type: 'filter',
+        level: relevant ? 0 : 1,
+        relevant: relevant,
       }),
       onDragEnter: () => setIsDraggedOver(true),
       onDragLeave: () => setIsDraggedOver(false),
       onDrop: () => setIsDraggedOver(false),
     });
-  }, [rank, isMid]);
+  }, [relevant]);
 
   const classes = classNames(
-    styles.rank,
+    styles.filter,
     {
       [styles.draggedOver]: isDraggedOver,
-      [styles.mid]: isMid,
-      [styles.header]: section === "header",
-      [styles.footer]: section === "footer",
+      [styles.rel]: relevant,
+      [styles.irr]: !relevant,
     }
   );
 
@@ -50,10 +48,10 @@ export default function RerankRank({ rank, items, isMid=false, section="body" }:
       className={classes}
       ref={rankRef}
     >
-      <div className={styles.rankList}>
+      <div className={styles.filterBoard}>
         {items.map((item, index) => (
-          <div key={index} className={styles.item}>
-            <RerankItem key={index} data={{ rank, index, item }} />
+          <div key={index}>
+            <Item key={index} data={{ level: relevant ? 0 : 1, index, item }} />
           </div>
         ))}
       </div>

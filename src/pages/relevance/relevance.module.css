@@ -1,0 +1,59 @@
+.relevance {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(40rem, 1fr));
+    column-gap: 1.5rem;
+    row-gap: 2rem;
+    overflow: auto;
+
+    padding: 0 3rem;
+    margin-bottom: 3rem;
+}
+
+.board {
+    display: grid;
+    grid-template-rows: 3rem 1fr;
+    row-gap: 1.5rem;
+
+    align-items: first baseline;
+    justify-items: center;
+}
+
+.boardHeader {
+    width: 20rem;
+    height: 3rem;
+    border: 1px solid #d0d0d0;
+    border-radius: 0.5rem;
+    align-self: center;
+    justify-self: center;
+
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-align: center;
+    line-height: 3rem;
+}
+
+.boardHeader.rel {
+    background-color: lightgreen;
+}
+
+.boardHeader.irr {
+    background-color: lightcoral;
+}
+
+.buttons {
+    height: 5rem;
+    width: 100%;
+    padding: 1rem 4rem 1rem 0rem;
+    
+    display: flex;
+    justify-content: flex-end;
+    border-bottom: 1px solid #d0d0d0;
+}
+
+.buttons button {
+    height: 3rem;
+    width: 5rem;
+    border-radius: 1rem;
+    font-size: 1rem;
+    margin: 0 2rem;
+}

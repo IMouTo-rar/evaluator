@@ -1,0 +1,29 @@
+.filter {
+    width: auto;
+    height: 100%;
+    min-height: 37.5rem;
+    padding: 2rem;
+    background-color: whitesmoke;
+    border-radius: 2rem;
+    border: 1px solid darkgray;
+
+    transition: all 0.3s ease-in-out;
+}
+
+.filter.rel {
+    background-color: #D7F3E3;
+}
+
+.filter.irr {
+    background-color: #FEE4E2;
+}
+
+.filter.draggedOver {
+    filter: grayscale(60%);
+}
+
+.filterBoard {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(var(--item-grid), var(--item-grid)));
+    row-gap: 1.5rem;
+}

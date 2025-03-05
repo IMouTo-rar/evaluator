@@ -1,0 +1,101 @@
+.rank {
+    --line-color: darkgray;
+    --line-color-dragged: blue;
+
+    width: 100%;
+    height: auto;
+    background-color: #f0f0f0;
+    padding-left: 4rem;
+
+    transition: all 0.3s ease-in-out;
+    position: relative;
+}
+
+.rank.draggedOver {
+    background-color: lightgray;
+}
+
+.rank.mid {
+    background-color: #f0f0f0;
+    height: 3rem;
+}
+
+.rank.mid::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background-color: var(--line-color);
+    transform: translateY(-50%);
+}
+
+.rank.mid.rank.draggedOver::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background-color: var(--line-color-dragged);
+    transform: translateY(-50%);
+}
+
+.rank.header {
+    height: 2rem;
+}
+
+.rank.header::before {
+    content: '';
+    position: absolute;
+    top: 0.5rem;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background-color: var(--line-color);
+    transform: translateY(-50%);
+}
+
+.rank.header.rank.draggedOver::before {
+    content: '';
+    position: absolute;
+    top: 0.5rem;
+    left: 0.5rem;
+    width: 100%;
+    height: 1px;
+    background-color: var(--line-color-dragged);
+    transform: translateY(-50%);
+}
+
+.rank.footer {
+    height: 4rem;
+}
+
+.rank.footer::before {
+    content: '';
+    position: absolute;
+    top: 1.5rem;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background-color: var(--line-color);
+    transform: translateY(-50%);
+}
+
+.rank.footer.rank.draggedOver::before {
+    content: '';
+    position: absolute;
+    top: 1.5rem;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background-color: var(--line-color-dragged);
+    transform: translateY(-50%);
+}
+
+.rankList {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(var(--item-grid), var(--item-grid)));
+    row-gap: 1.5rem;
+}
