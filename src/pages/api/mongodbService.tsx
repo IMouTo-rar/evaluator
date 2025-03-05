@@ -73,7 +73,7 @@ export async function updateQuery(collection: string, id: number, _query: Query)
 
 interface Counters {
   _id: string;
-  sequence_value: number;
+  seq: number;
 }
 
 export async function getNextSequenceValue(sequenceName: string) {
@@ -82,12 +82,12 @@ export async function getNextSequenceValue(sequenceName: string) {
   try {
     const sequenceDocument = await db.findOneAndUpdate(
       { _id: sequenceName },
-      { $inc: { sequence_value: 1 } },
+      { $inc: { seq: 1 } },
       { returnDocument: 'after', upsert: true }
     );
 
-    if (sequenceDocument && sequenceDocument.sequence_value !== undefined) {
-      return sequenceDocument.sequence_value;
+    if (sequenceDocument && sequenceDocument.seq !== undefined) {
+      return sequenceDocument.seq;
     } else {
       throw new Error("Failed to get the sequence value.");
     }
