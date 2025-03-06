@@ -1,6 +1,6 @@
 import { 
   serverGetQueryById,
-} from '@/pages/actions/queries.impl';
+} from '@/server/queries.impl';
 
 export default async function DataPage({
   params,

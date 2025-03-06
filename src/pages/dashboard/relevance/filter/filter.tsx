@@ -13,7 +13,7 @@ interface Filter {
   relevant?: boolean;
 }
 
-export default function Filter({ items, relevant=false }: Filter) {
+export default function Filter({ items, relevant = false }: Filter) {
   const rankRef = useRef<HTMLDivElement | null>(null);
   const [isDraggedOver, setIsDraggedOver] = useState(false);
 
@@ -50,9 +50,7 @@ export default function Filter({ items, relevant=false }: Filter) {
     >
       <div className={styles.filterBoard}>
         {items.map((item, index) => (
-          <div key={index}>
-            <Item key={index} data={{ level: relevant ? 0 : 1, index, item }} />
-          </div>
+          <Item key={index} data={{ level: relevant ? 0 : 1, index, item }} />
         ))}
       </div>
     </div>

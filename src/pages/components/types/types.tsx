@@ -1,10 +1,11 @@
 export type Item = {
-  id?: number;
+  id: number;
   filename: string;
-  score?: number;
-  tag?: string;
+  appScore: number;
+  tag: string;
   domain: string;
-  timestamp?: string;
+  timestamp: string;
+  ocr: string;
 }
 
 export type Query = {

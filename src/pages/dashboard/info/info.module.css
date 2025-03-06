@@ -1,0 +1,116 @@
+.infoPage {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+
+
+    backdrop-filter: blur(2px) brightness(80%) contrast(90%);
+}
+
+.infoPage.hidden {
+    display: none;
+}
+
+.infoBlock {
+    --info-height: 90%;
+    --info-width: 60%;
+
+    position: fixed;
+    width: var(--info-width);
+    height: var(--info-height);
+    top: calc(50% - var(--info-height) / 2);
+    left: calc(50% - var(--info-width) / 2);
+
+    border: 1px solid lightslategrey;
+    border-radius: 1rem;
+    padding: 1rem;
+    overflow: auto;
+
+    background-color: whitesmoke;
+
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+.infoBlock .media {
+    width: 80%;
+    height: 65%;
+    display: block;
+    position: relative;
+}
+
+.infoBlock .media .image,
+.infoBlock .media .video {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.infoBlock .close {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+
+    font-size: 1.5rem;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 2rem;
+    background-color: argb(14, 0, 0, 0.7);
+    border: 0.1rem solid white;
+    position: absolute;
+    user-select: none;
+    cursor: pointer;
+}
+
+
+.infoBlock .table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.infoBlock .table td {
+    border: 1px solid #ddd;
+    padding: 0.5rem;
+    text-align: left;
+    min-width: 2rem;
+    box-sizing: border-box;
+}
+
+.infoBlock .table tr:nth-child(odd) {
+    background-color: #f2f2f2;
+}
+
+.infoBlock .table tr:nth-child(even) {
+    background-color: #ddd;
+}
+
+@media (max-width: 600px) {
+
+    .infoBlock .table,
+    .infoBlock .table tbody,
+    .infoBlock .table tr,
+    .infoBlock .table td {
+        display: block;
+    }
+
+    .infoBlock .table tr {
+        margin-bottom: 1rem;
+    }
+
+    .infoBlock .table td {
+        text-align: right;
+        position: relative;
+        padding-left: 50%;
+        border: none;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .infoBlock .table td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 1rem;
+        font-weight: bold;
+    }
+}

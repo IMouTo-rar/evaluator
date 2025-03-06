@@ -2,7 +2,10 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import { createContext, Dispatch, SetStateAction, useState } from "react";
 import "./globals.css";
+import styles from "./layout.module.css";
 import Header from "@/pages/dashboard/header/header";
+import { Item } from "@/pages/components/types/types";
+import Info from "@/pages/dashboard/info/info";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -14,18 +17,34 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-interface HeaderContextType {
-  page: string;
-  setPage: Dispatch<SetStateAction<string>>;
+interface ContextType {
   query: string;
   setQuery: Dispatch<SetStateAction<string>>;
+
+  info: boolean;
+  setInfo: Dispatch<SetStateAction<boolean>>;
+
+  item: Item;
+  setItem: Dispatch<SetStateAction<Item>>;
 }
 
-export const HeaderContext = createContext<HeaderContextType>({
-  page: "",
-  setPage: () => {},
+export const context = createContext<ContextType>({
   query: "",
-  setQuery: () => {},
+  setQuery: () => { },
+
+  info: false,
+  setInfo: () => { },
+
+  item: {
+    id: 0,
+    filename: "",
+    appScore: 0.0,
+    domain: "",
+    tag: "",
+    ocr: "",
+    timestamp: "",
+  },
+  setItem: () => { },
 });
 
 export default function RootLayout({
@@ -33,16 +52,37 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [page, setPage] = useState("");
   const [query, setQuery] = useState("");
+  const [info, setInfo] = useState(false);
+  const [item, setItem] = useState<Item>({
+    id: 0,
+    filename: "",
+    appScore: 0.0,
+    domain: "",
+    tag: "",
+    ocr: "",
+    timestamp: "",
+  });
 
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <HeaderContext.Provider value={{ page, setPage, query, setQuery}} >
+        <context.Provider
+          value={{
+            query,
+            setQuery,
+            info,
+            setInfo,
+            item,
+            setItem,
+          }}
+        >
           <Header />
-          {children}
-        </HeaderContext.Provider>
+          <Info />
+          <div className={styles.pageArea}>
+            {children}
+          </div>
+        </context.Provider>
       </body>
     </html>
   );

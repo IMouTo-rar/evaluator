@@ -8,7 +8,7 @@ import styles from './rerank.module.css';
 
 import Rank from './rank/rank';
 import { Item as ItemType } from "@/pages/components/types/types";
-import { HeaderContext } from '@/app/layout';
+import { context } from '@/app/layout';
 // import Header from '../header/header';
 
 interface RerankProps {
@@ -18,12 +18,12 @@ interface RerankProps {
 }
 
 export default function Rerank({ id, query, rankList }: RerankProps) {
-  const tableRef = useRef<HTMLDivElement | null>(null);
+  const ref = useRef<HTMLDivElement | null>(null);
   const [rerankList, setRerankList] = useState(rankList);
   const [stored, setStored] = useState(true);
   const router = useRouter();
 
-  const { setPage } = useContext(HeaderContext);
+  const { setQuery } = useContext(context);
 
   // 监听 beforeunload 事件
   useEffect(() => {
@@ -41,12 +41,13 @@ export default function Rerank({ id, query, rankList }: RerankProps) {
 
   // 进入 / 退出
   useEffect(() => {
-    setPage("rerank");
+    setQuery(query);
     handleSubmit(id, rerankList, 'reranking');
     return () => {
+      setQuery("");
       handleSubmit(id, rerankList);
     };
-  }, [id, rerankList, setPage]);
+  }, [id, query, rerankList, setQuery]);
 
   // 拖拽区
   useEffect(() => {
@@ -133,10 +134,7 @@ export default function Rerank({ id, query, rankList }: RerankProps) {
   return (
     <div className={styles.page}>
       {/* <Header /> */}
-      <div className={styles.rerank} ref={tableRef}>
-        <div className={styles.query}>
-          {query}
-        </div>
+      <div className={styles.rerank} ref={ref}>
         {rerankList.map((item, index) => (
           <div key={index}>
             {/* header */}
@@ -156,12 +154,12 @@ export default function Rerank({ id, query, rankList }: RerankProps) {
             )}
           </div>
         ))}
-        <div className={styles.buttons}>
-          <button onClick={handleQuit}>退出</button>
-          <button onClick={handleSave}>保存</button>
-          <button onClick={handleBack}>上一步</button>
-          <button onClick={handleDone}>完成</button>
-        </div>
+      </div>
+      <div className={styles.buttons}>
+        <button onClick={handleQuit}>退出</button>
+        <button onClick={handleSave}>保存</button>
+        <button onClick={handleBack}>上一步</button>
+        <button onClick={handleDone}>完成</button>
       </div>
     </div>
   );

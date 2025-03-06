@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { updateQueryRelevant } from '../actions/queries.database';
+import { updateQueryRelevant } from '../../server/queries.database';
 
 export type Data = {
   message?: string;

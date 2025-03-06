@@ -1,4 +1,4 @@
-import { severGetAllQueries } from "@/pages/actions/queries.impl";
+import { severGetAllQueries } from "@/server/queries.impl";
 import type { Metadata } from "next";
 import styles from "./page.module.css";
 import Main from "@/pages/dashboard/main/main";

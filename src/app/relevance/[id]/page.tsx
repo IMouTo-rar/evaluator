@@ -1,7 +1,7 @@
 import Relevance from '@/pages/dashboard/relevance/relevance';
 import {
   serverGetQueryById,
-} from '@/pages/actions/queries.impl';
+} from '@/server/queries.impl';
 import { notFound } from 'next/navigation';
 
 export default async function RelevancePage({

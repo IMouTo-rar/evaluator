@@ -2,7 +2,7 @@ import Rerank from "@/pages/dashboard/rerank/rerank";
 
 import {
   serverGetQueryById,
-} from "@/pages/actions/queries.impl";
+} from "@/server/queries.impl";
 import { notFound } from "next/navigation";
 
 export default async function RerankPage({

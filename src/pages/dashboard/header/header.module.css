@@ -2,6 +2,7 @@
     height: var(--header-height);
     width: 100%;
     background-color: #f0f0f0;
+    border-bottom: 1px solid var(--soild-line-color);
     padding-left: 2rem;
     display: grid;
     grid-template-columns: repeat(12, 8rem);
@@ -16,7 +17,7 @@
     width: 100%;
 
     font-weight: bold;
-    
+
     display: flex;
     align-items: center;
     font-size: 1.2rem;
@@ -25,14 +26,38 @@
 .links {
     height: var(--header-height);
     width: 100%;
-    
+
     color: grey;
     font-weight: bold;
     font-style: italic;
 
+    grid-column: span 2;
     display: flex;
     align-items: center;
 
     cursor: pointer;
     user-select: none;
+}
+
+.query {
+    height: var(--header-height);
+    width: 100%;
+    font-size: 1.2rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+
+    animation: showQuery 1s cubic-bezier(0.4, 0.0, 0.2, 1) forwards; /* 动画名称、时长和方向 */
+}
+
+/* 定义动画关键帧 */
+@keyframes showQuery {
+    0% {
+        color: transparent;
+        transform: translateY(0.5rem);
+    }
+    100% {
+        color: black;
+        transform: translateY(0);
+    }
 }

@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { monitorForElements } from '@atlaskit/pragmatic-drag-and-drop/element/adapter';
 import { extractClosestEdge } from '@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge';
@@ -8,6 +8,7 @@ import classNames from 'classnames';
 import { Item as ItemType } from '@/pages/components/types/types';
 import styles from './relevance.module.css';
 import Filter from './filter/filter';
+import { context } from '@/app/layout';
 // import Header from '../header/header';
 
 interface RelevanceProps {
@@ -17,11 +18,12 @@ interface RelevanceProps {
 }
 
 export default function Relevance({ id, query, relList }: RelevanceProps) {
-
   const boardRef = useRef<HTMLDivElement | null>(null);
   const [rels, setRels] = useState(relList);
   const [stored, setStored] = useState(true);
   const router = useRouter();
+
+  const { setQuery } = useContext(context);
 
   // 监听 beforeunload 事件
   useEffect(() => {
@@ -39,11 +41,13 @@ export default function Relevance({ id, query, relList }: RelevanceProps) {
 
   // 进入 / 退出
   useEffect(() => {
+    setQuery(query);
     handleSubmit(id, rels[0], rels[1], "verifying");
     return () => {
+      setQuery("");
       handleSubmit(id, rels[0], rels[1]);
     };
-  }, [id, rels]);
+  }, [id, query, rels, setQuery]);
 
   // 拖拽区
   useEffect(() => {
@@ -116,29 +120,25 @@ export default function Relevance({ id, query, relList }: RelevanceProps) {
   return (
     <div className={styles.page}>
       {/* <Header /> */}
-      <div className={styles.relevance}>
-        <div className={styles.query}>
-          {query}
-        </div>
-        <div className={styles.boards} ref={boardRef}>
-          <div className={styles.board}>
-            <div className={classNames(styles.boardHeader, styles.rel)}>
-              相关
-            </div>
-            <Filter items={relList[0]} relevant={true} />
+      <div className={styles.relevance} ref={boardRef}>
+        <div className={styles.board}>
+          <div className={classNames(styles.boardHeader, styles.rel)}>
+            相关
           </div>
-          <div className={styles.board}>
-            <div className={classNames(styles.boardHeader, styles.irr)}>
-              不相关
-            </div>
-            <Filter items={relList[1]} relevant={false} />
+          <Filter items={relList[0]} relevant={true} />
+        </div>
+        <div className={styles.board}>
+          <div className={classNames(styles.boardHeader, styles.irr)}>
+            不相关
           </div>
+          <Filter items={relList[1]} relevant={false} />
         </div>
-        <div className={styles.buttons}>
-          <button onClick={handleQuit}>退出</button>
-          <button onClick={handleSave}>保存</button>
-          <button onClick={handleNext}>下一步</button>
-        </div>
+      </div>
+      <div className={styles.buttons}>
+        <button onClick={handleQuit}>退出</button>
+        <button onClick={handleSave}>保存</button>
+        <button onClick={handleNext}>下一步</button>
+        <div className={styles.placeholder}></div>
       </div>
     </div>
   );

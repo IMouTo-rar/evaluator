@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 import styles from './item.module.css';
 import invariant from 'tiny-invariant';
@@ -18,6 +18,7 @@ import { preserveOffsetOnSource } from '@atlaskit/pragmatic-drag-and-drop/elemen
 
 import Media from '@/pages/components/media/media';
 import { Item as ItemType } from '@/pages/components/types/types';
+import { context } from '@/app/layout';
 
 interface ItemProps {
   data: {
@@ -34,6 +35,8 @@ export default function Item({ data }: ItemProps) {
   const [state, setState] = useState<'idle' | 'dragging' | 'dragOver' | 'prewview'>('idle');
   const [container, setContainer] = useState<HTMLElement | null>(null);
   const [closestEdge, setClosestEdge] = useState<Edge | null>(null);
+
+  const { setInfo, setItem } = useContext(context);
 
   useEffect(() => {
     const el = itemRef.current;
@@ -53,7 +56,7 @@ export default function Item({ data }: ItemProps) {
             getOffset: preserveOffsetOnSource({
               element: source.element,
               input: location.current.input,
-          }),
+            }),
             render({ container }) {
               setState('prewview');
               setContainer(container);
@@ -109,6 +112,11 @@ export default function Item({ data }: ItemProps) {
     );
   }, [level, index, item, state]);
 
+  function showInfo() {
+    setInfo(true);
+    setItem(item);
+  }
+
   const classes = classNames(
     styles.item,
     {
@@ -122,15 +130,18 @@ export default function Item({ data }: ItemProps) {
       className={classes}
       ref={itemRef}
     >
-      <div className={styles.info}>
+      <div
+        className={styles.info}
+        onClick={showInfo}
+      >
         ...
       </div>
       <div className={styles.image}>
-        <Media name={item.filename} type={item.domain}/>
+        <Media name={item.filename} type={item.domain} />
       </div>
       {state === 'prewview' && container && ReactDOM.createPortal(
         <div className={classNames(styles.image, styles.preview)}>
-          <Media name={item.filename} type={item.domain}/>
+          <Media name={item.filename} type={item.domain} />
         </div>,
         container)}
       {closestEdge && <DropIndicator edge={closestEdge} />}

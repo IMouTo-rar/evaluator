@@ -43,14 +43,13 @@
 }
 
 .rank.header {
-    height: 2rem;
+    height: 1.5rem;
 }
 
 .rank.header::before {
     content: '';
     position: absolute;
-    top: 0.5rem;
-    left: 0;
+    top: 0rem;
     width: 100%;
     height: 1px;
     background-color: var(--line-color);
@@ -60,26 +59,24 @@
 .rank.header.rank.draggedOver::before {
     content: '';
     position: absolute;
-    top: 0.5rem;
-    left: 0.5rem;
+    top: 0rem;
     width: 100%;
-    height: 1px;
+    height: 2px;
     background-color: var(--line-color-dragged);
     transform: translateY(-50%);
 }
 
 .rank.footer {
-    height: 3rem;
+    height: 1.5rem;
 }
 
 .rank.footer::before {
     content: '';
     position: absolute;
     top: 1.5rem;
-    left: 0;
     width: 100%;
     height: 1px;
-    background-color: var(--line-color);
+    background-color: transparent;
     transform: translateY(-50%);
 }
 
@@ -87,7 +84,6 @@
     content: '';
     position: absolute;
     top: 1.5rem;
-    left: 0;
     width: 100%;
     height: 1px;
     background-color: var(--line-color-dragged);

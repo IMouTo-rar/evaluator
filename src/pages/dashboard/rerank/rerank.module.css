@@ -1,24 +1,21 @@
-/* .rerank {
-    margin-top: var(--header-height);
-} */
+.page {
+    display: grid;
+    grid-template-rows: 1fr 7rem;
+    height: calc(100vh - var(--header-height));
+}
 
-.query {
-    font-size: 1.2rem;
-    font-weight: bold;
-    position: absolute;
-    top: -2.4rem;
-    left: 18rem;
-    z-index: 1000;
+.rerank {
+    overflow: auto;
 }
 
 .buttons {
-    height: 5rem;
+    height: 7rem;
     width: 100%;
-    padding: 0rem 4rem 2rem 0rem;
-    
+    padding: 2rem 4rem;
+
     display: flex;
     justify-content: flex-end;
-    /* border-bottom: 1px solid #d0d0d0; */
+    border-top: 1px solid var(--soild-line-color);
 
     transition: all 0.3s ease-in-out;
 }
