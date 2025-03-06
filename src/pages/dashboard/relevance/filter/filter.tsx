@@ -4,8 +4,8 @@ import styles from './filter.module.css';
 import invariant from 'tiny-invariant';
 import { dropTargetForElements } from '@atlaskit/pragmatic-drag-and-drop/element/adapter';
 
-import Item from '../../components/item/item';
-import { Item as ItemType } from '../../components/types/types';
+import Item from '../../../components/item/item';
+import { Item as ItemType } from '../../../components/types/types';
 import classNames from 'classnames';
 
 interface Filter {

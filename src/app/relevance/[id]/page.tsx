@@ -1,35 +1,22 @@
-import Relevance from '@/pages/relevance/relevance';
-
-import { 
+import Relevance from '@/pages/dashboard/relevance/relevance';
+import {
   serverGetQueryById,
-  severUpdateQuery
-} from '@/pages/api/impl.queries';
+} from '@/pages/actions/queries.impl';
 import { notFound } from 'next/navigation';
-import { Item } from '@/pages/components/types/types';
 
 export default async function RelevancePage({
   params,
 }: {
-  params: Promise<{ id: number }>;
+  params: Promise<{ id: string }>;
 }) {
-  const id = (await params).id;
+  const id = parseInt((await params).id, 10);
   const query = await serverGetQueryById(id);
   if (!query) { notFound(); }
 
   const queryStr = query.query;
   const relList = [query.relevant, query.irrelevant];
 
-  function updateRel(_relevant: Item[], _irrelevant: Item[], _state: string = "") {
-    if (!query) { return; }
-    query.relevant = _relevant;
-    query.irrelevant = _irrelevant;
-    query.state = _state === "" ? query.state : _state;
-    severUpdateQuery("queries", id, query);
-  }
-
   return (
-    <Relevance query={queryStr} relList={relList} onSave={updateRel}/>
+    <Relevance id={id} query={queryStr} relList={relList} />
   );
-
 }
-

@@ -1,10 +1,16 @@
-import { severGetAllQueries } from "@/pages/api/impl.queries";
+import { severGetAllQueries } from "@/pages/actions/queries.impl";
+import type { Metadata } from "next";
 import styles from "./page.module.css";
-import Main from "@/pages/main/main";
+import Main from "@/pages/dashboard/main/main";
+
+export const metadata: Metadata = {
+  title: "Evaluator",
+  description: "evaluate relevance and rank",
+};
 
 export default async function Home() {
 
-  const queries = await severGetAllQueries("queries");
+  const queries = await severGetAllQueries();
 
   return (
     <div className={styles.page}>

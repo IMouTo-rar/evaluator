@@ -1,14 +1,14 @@
 .header {
-    --header-height: 3rem;
-
     height: var(--header-height);
     width: 100%;
-    
     background-color: #f0f0f0;
     padding-left: 2rem;
-
     display: grid;
     grid-template-columns: repeat(12, 8rem);
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
 }
 
 .title {

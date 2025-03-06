@@ -1,12 +1,14 @@
 import { 
     getAllQueries, 
     getQueryById,
-    updateQuery, 
-} from "./mongodbService";
-import { Query } from "@/pages/components/types/types";
+    updateQuery,
+    updateQueryRelevant,
+    updateQueryRerank,
+} from "./queries.database";
+import { Item, Query } from "@/pages/components/types/types";
 
-export async function severGetAllQueries(collection: string) {
-  const queries = await getAllQueries(collection);
+export async function severGetAllQueries() {
+  const queries = await getAllQueries("queries");
   return queries.map(doc => ({
     id: doc.id,
     query: doc.query,
@@ -33,6 +35,14 @@ export async function serverGetQueryById(id: number) {
     } as Query : null;
 }
 
-export async function severUpdateQuery(collection: string, id: number, _query: Query) {
-    return await updateQuery(collection, id, _query);
+export async function severUpdateQuery(id: number, _query: Query) {
+    return await updateQuery("queries", id, _query);
+}
+
+export async function severUpdateRelevant(id: number, rel: Item[], irr: Item[], state: string) {
+    return await updateQueryRelevant("queries", id, rel, irr, state);
+}
+
+export async function severUpdateRerank(id: number, rerank: Item[][], state: string) {
+    return await updateQueryRerank("queries", id, rerank, state);
 }

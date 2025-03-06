@@ -1,37 +1,29 @@
-import Rerank from "@/pages/rerank/rerank";
+import Rerank from "@/pages/dashboard/rerank/rerank";
 
-import { 
+import {
   serverGetQueryById,
-  severUpdateQuery
-} from "@/pages/api/impl.queries";
+} from "@/pages/actions/queries.impl";
 import { notFound } from "next/navigation";
-import { Item } from "@/pages/components/types/types";
 
 export default async function RerankPage({
   params,
 }: {
-  params: Promise<{ id: number }>;
+  params: Promise<{ id: string }>;
 }) {
-  
-  const id = (await params).id;
+  const id = parseInt((await params).id, 10);
   const query = await serverGetQueryById(id);
 
   if (!query) {
     notFound();
   }
 
-  function updateRerank(_rerank: Item[][], _state: string = "") {
-      if (!query) { return; }
-      query.rerank = _rerank;
-      query.state = _state === "" ? query.state : _state;
-      severUpdateQuery("queries", id, query);
-    }
-
-  const rankList = createRankList(query.relevant, 5);
+  const rankList = Array.isArray(query.rerank) && query.rerank.length > 0
+    ? query.rerank
+    : createRankList(query.relevant.slice(0, 20), 5);
   const queryStr = query.query;
 
   return (
-    <Rerank query={queryStr} rankList={rankList} onSave={updateRerank}/>
+    <Rerank id={id} query={queryStr} rankList={rankList}/>
   );
 }
 

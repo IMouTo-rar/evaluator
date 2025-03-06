@@ -1,6 +1,6 @@
 import { MongoClient } from 'mongodb';
 import dotenv from 'dotenv';
-import { Query } from '@/pages/components/types/types';
+import { Query, Item } from '@/pages/components/types/types';
 
 dotenv.config();
 const DB_CONN_STRING = String(process.env.DB_CONN_STRING);
@@ -67,6 +67,70 @@ export async function updateQuery(collection: string, id: number, _query: Query)
     return result.acknowledged;
   } catch (error) {
     console.error('Error while updating query:', error);
+    throw error;
+  }
+}
+
+export async function updateQueryRelevant(
+  collection: string,
+  id: number,
+  rel: Item[],
+  irr: Item[],
+  state: string
+) {
+  try {
+    const client = await initializeClient();
+    const query = { id: id };
+    const update = state === ""
+      ? {
+        $set: {
+          relevant: rel,
+          irrelevant: irr,
+        }
+      }
+      : {
+        $set: {
+          relevant: rel,
+          irrelevant: irr,
+          state: state,
+        }
+      };
+    const result = await client.db(DB_NAME)
+      .collection(collection)
+      .updateOne(query, update);
+    return result.acknowledged;
+  } catch (error) {
+    console.error('Error while updating query relevant:', error);
+    throw error;
+  }
+}
+
+export async function updateQueryRerank(
+  collection: string,
+  id: number,
+  rerank: Item[][],
+  state: string
+) {
+  try {
+    const client = await initializeClient();
+    const query = { id: id };
+    const update = state === ""
+      ? {
+        $set: {
+          rerank: rerank,
+        }
+      } : {
+        $set: {
+          rerank: rerank,
+          state: state,
+        }
+      };
+    const result = await client.db(DB_NAME)
+      .collection(collection)
+      .updateOne(query, update);
+    return result.acknowledged;
+  } catch (error) {
+    console.error('Error while updating query rerank:', error);
     throw error;
   }
 }

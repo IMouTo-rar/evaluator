@@ -1,6 +1,6 @@
 "use client";
-import { useEffect, useRef, useState } from 'react';
-
+import { useContext, useEffect, useRef, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { monitorForElements } from '@atlaskit/pragmatic-drag-and-drop/element/adapter';
 import { extractClosestEdge } from '@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge';
 
@@ -8,18 +8,22 @@ import styles from './rerank.module.css';
 
 import Rank from './rank/rank';
 import { Item as ItemType } from "@/pages/components/types/types";
+import { HeaderContext } from '@/app/layout';
+// import Header from '../header/header';
 
 interface RerankProps {
+  id: number;
   query: string;
   rankList: ItemType[][];
-  onSave: (rankList: ItemType[][], state?: string) => void;
 }
 
-export default function Rerank({ query, rankList, onSave }: RerankProps) {
-
+export default function Rerank({ id, query, rankList }: RerankProps) {
   const tableRef = useRef<HTMLDivElement | null>(null);
   const [rerankList, setRerankList] = useState(rankList);
   const [stored, setStored] = useState(true);
+  const router = useRouter();
+
+  const { setPage } = useContext(HeaderContext);
 
   // 监听 beforeunload 事件
   useEffect(() => {
@@ -37,11 +41,12 @@ export default function Rerank({ query, rankList, onSave }: RerankProps) {
 
   // 进入 / 退出
   useEffect(() => {
-    onSave(rerankList, "reranking");
+    setPage("rerank");
+    handleSubmit(id, rerankList, 'reranking');
     return () => {
-      onSave(rerankList);
+      handleSubmit(id, rerankList);
     };
-  }, [onSave, rerankList]);
+  }, [id, rerankList, setPage]);
 
   // 拖拽区
   useEffect(() => {
@@ -102,44 +107,80 @@ export default function Rerank({ query, rankList, onSave }: RerankProps) {
     setStored(false);
   }, [rerankList]);
 
-  function handleSave() {
+  async function handleQuit() {
+    handleSubmit(id, rerankList);
     setStored(true);
-    onSave(rerankList, "reranking");
+    router.push(`/#${id}`);
+  }
+
+  async function handleSave() {
+    handleSubmit(id, rerankList, "reranked");
+    setStored(true);
+  }
+
+  async function handleBack() {
+    handleSubmit(id, rerankList);
+    setStored(true);
+    router.push(`/relevance/${id}`);
   }
 
   function handleDone() {
+    handleSubmit(id, rerankList, "reranked");
     setStored(true);
-    onSave(rerankList, "reranking");
+    router.push(`/#${id}`);
   }
 
   return (
-    <div className={styles.table} ref={tableRef}>
-      <div className={styles.query}>
-        {query}
-      </div>
-      {rerankList.map((item, index) => (
-        <div key={index}>
-          {/* header */}
-          {index === 0 && (
-            <Rank rank={0} items={[]} isMid={true} section='header' />
-          )}
-
-          {/* body */}
-          <Rank rank={index} items={item} />
-          {index < rerankList.length - 1 && (
-            <Rank rank={index + 1} items={[]} isMid={true} />
-          )}
-
-          {/* footer */}
-          {index === rerankList.length - 1 && (
-            <Rank rank={index + 1} items={[]} isMid={true} section='footer' />
-          )}
+    <div className={styles.page}>
+      {/* <Header /> */}
+      <div className={styles.rerank} ref={tableRef}>
+        <div className={styles.query}>
+          {query}
         </div>
-      ))}
-      <div className={styles.buttons}>
-        <button onClick={handleSave}>暂存</button>
-        <button onClick={handleDone}>完成</button>
+        {rerankList.map((item, index) => (
+          <div key={index}>
+            {/* header */}
+            {index === 0 && (
+              <Rank rank={0} items={[]} isMid={true} section='header' />
+            )}
+
+            {/* body */}
+            <Rank rank={index} items={item} />
+            {index < rerankList.length - 1 && (
+              <Rank rank={index + 1} items={[]} isMid={true} />
+            )}
+
+            {/* footer */}
+            {index === rerankList.length - 1 && (
+              <Rank rank={index + 1} items={[]} isMid={true} section='footer' />
+            )}
+          </div>
+        ))}
+        <div className={styles.buttons}>
+          <button onClick={handleQuit}>退出</button>
+          <button onClick={handleSave}>保存</button>
+          <button onClick={handleBack}>上一步</button>
+          <button onClick={handleDone}>完成</button>
+        </div>
       </div>
     </div>
   );
+}
+
+function handleSubmit(id: number, rerankList: ItemType[][], state: string = "") {
+  const data = {
+    id: id,
+    rerankList: rerankList,
+    state: state,
+  };
+  fetch('/api/submitRerank', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  })
+    .then(response => response.json())
+    .then(data => console.log(data))
+    .catch((error) => console.error('Error:', error));
 }

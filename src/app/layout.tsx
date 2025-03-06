@@ -1,7 +1,8 @@
-import type { Metadata } from "next";
+"use client";
 import { Geist, Geist_Mono } from "next/font/google";
+import { createContext, Dispatch, SetStateAction, useState } from "react";
 import "./globals.css";
-import Header from "@/pages/header/header";
+import Header from "@/pages/dashboard/header/header";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -13,21 +14,35 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "Evaluator",
-  description: "evaluate relevance and rank",
-};
+interface HeaderContextType {
+  page: string;
+  setPage: Dispatch<SetStateAction<string>>;
+  query: string;
+  setQuery: Dispatch<SetStateAction<string>>;
+}
+
+export const HeaderContext = createContext<HeaderContextType>({
+  page: "",
+  setPage: () => {},
+  query: "",
+  setQuery: () => {},
+});
 
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const [page, setPage] = useState("");
+  const [query, setQuery] = useState("");
+
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <Header />
-        {children}
+        <HeaderContext.Provider value={{ page, setPage, query, setQuery}} >
+          <Header />
+          {children}
+        </HeaderContext.Provider>
       </body>
     </html>
   );

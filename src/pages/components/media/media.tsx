@@ -7,9 +7,7 @@ interface MediaProps {
 }
 
 export default function Media({ name, type }: MediaProps) {
-
   const filePath = `/photos/${name}`;
-  console.log(type);
 
   return (
     <div className={styles.media}>

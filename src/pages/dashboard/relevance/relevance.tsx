@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { monitorForElements } from '@atlaskit/pragmatic-drag-and-drop/element/adapter';
 import { extractClosestEdge } from '@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge';
 import classNames from 'classnames';
@@ -7,18 +8,20 @@ import classNames from 'classnames';
 import { Item as ItemType } from '@/pages/components/types/types';
 import styles from './relevance.module.css';
 import Filter from './filter/filter';
+// import Header from '../header/header';
 
 interface RelevanceProps {
+  id: number;
   query: string;
   relList: ItemType[][];
-  onSave: (_relevant: ItemType[], _irrelevant: ItemType[], state?: string) => void;
 }
 
-export default function Relevance({ query, relList, onSave }: RelevanceProps) {
+export default function Relevance({ id, query, relList }: RelevanceProps) {
 
   const boardRef = useRef<HTMLDivElement | null>(null);
   const [rels, setRels] = useState(relList);
   const [stored, setStored] = useState(true);
+  const router = useRouter();
 
   // 监听 beforeunload 事件
   useEffect(() => {
@@ -36,11 +39,11 @@ export default function Relevance({ query, relList, onSave }: RelevanceProps) {
 
   // 进入 / 退出
   useEffect(() => {
-    onSave(rels[0], rels[1], "verifying");
+    handleSubmit(id, rels[0], rels[1], "verifying");
     return () => {
-      onSave(rels[0], rels[1]);
+      handleSubmit(id, rels[0], rels[1]);
     };
-  }, [rels, onSave]);
+  }, [id, rels]);
 
   // 拖拽区
   useEffect(() => {
@@ -93,39 +96,69 @@ export default function Relevance({ query, relList, onSave }: RelevanceProps) {
     setStored(false);
   }, [rels]);
 
-  function handleSave() {
+  function handleQuit() {
+    handleSubmit(id, rels[0], rels[1]);
     setStored(true);
-    onSave(rels[0], rels[1]);
+    router.push(`/#${id}`);
   }
 
-  function handleDone() {
+  function handleSave() {
+    handleSubmit(id, rels[0], rels[1]);
     setStored(true);
-    onSave(rels[0], rels[1], "verified");
+  }
+
+  function handleNext() {
+    handleSubmit(id, rels[0], rels[1], "verified");
+    setStored(true);
+    router.push(`/rerank/${id}`);
   }
 
   return (
-    <div>
-      <div className={styles.query}>
-        {query}
-      </div>
-      <div className={styles.relevance} ref={boardRef}>
-        <div className={styles.board}>
-          <div className={classNames(styles.boardHeader, styles.rel)}>
-            相关
-          </div>
-          <Filter items={relList[0]} relevant={true} />
+    <div className={styles.page}>
+      {/* <Header /> */}
+      <div className={styles.relevance}>
+        <div className={styles.query}>
+          {query}
         </div>
-        <div className={styles.board}>
-          <div className={classNames(styles.boardHeader, styles.irr)}>
-            不相关
+        <div className={styles.boards} ref={boardRef}>
+          <div className={styles.board}>
+            <div className={classNames(styles.boardHeader, styles.rel)}>
+              相关
+            </div>
+            <Filter items={relList[0]} relevant={true} />
           </div>
-          <Filter items={relList[1]} relevant={false} />
+          <div className={styles.board}>
+            <div className={classNames(styles.boardHeader, styles.irr)}>
+              不相关
+            </div>
+            <Filter items={relList[1]} relevant={false} />
+          </div>
         </div>
-      </div>
-      <div className={styles.buttons}>
-        <button onClick={handleSave}>暂存</button>
-        <button onClick={handleDone}>完成</button>
+        <div className={styles.buttons}>
+          <button onClick={handleQuit}>退出</button>
+          <button onClick={handleSave}>保存</button>
+          <button onClick={handleNext}>下一步</button>
+        </div>
       </div>
     </div>
   );
+}
+
+function handleSubmit(id: number, relList: ItemType[], irrList: ItemType[], state: string = "") {
+  const data = {
+    id: id,
+    relList: relList,
+    irrList: irrList,
+    state: state,
+  };
+  fetch('/api/submitRelevance', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  })
+    .then(response => response.json())
+    .then(data => console.log(data))
+    .catch((error) => console.error('Error:', error));
 }
