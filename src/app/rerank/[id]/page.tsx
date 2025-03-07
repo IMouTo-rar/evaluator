@@ -17,13 +17,13 @@ export default async function RerankPage({
     notFound();
   }
 
-  const rankList = Array.isArray(query.rerank) && query.rerank.length > 0
-    ? query.rerank
-    : createRankList(query.relevant.slice(0, 20), 5);
+  const rankList = query.rerank?.length > 0 && query.state !== "verified"
+      ? query.rerank
+      : createRankList(query.relevant.slice(0, 20), 5);
   const queryStr = query.query;
 
   return (
-    <Rerank id={id} query={queryStr} rankList={rankList}/>
+    <Rerank id={id} query={queryStr} rankList={rankList} />
   );
 }
 
