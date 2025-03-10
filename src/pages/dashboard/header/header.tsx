@@ -4,6 +4,7 @@ import styles from "./header.module.css";
 import { usePathname } from "next/navigation";
 import { useContext } from "react";
 import { context } from "@/app/layout";
+import Highlight from "@/pages/components/highlight/highlight";
 
 export default function Header() {
 
@@ -21,7 +22,7 @@ export default function Header() {
         <Link href="/">/Home</Link>
         {(pathname && pathname !== "/") && <span>/{pathSegments[0]}</span>}
       </div>
-      {query && <div className={styles.query}>{query}</div>}
+      {query && <Highlight text={query} wordList={['树']}/>}
     </header>
   );
 }

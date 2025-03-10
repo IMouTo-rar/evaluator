@@ -12,6 +12,7 @@ export async function severGetAllQueries() {
   return queries.map(doc => ({
     id: doc.id,
     query: doc.query,
+    keyword: doc.keyword,
     state: doc.state,
     annotation: doc.annotation,
     modified: doc.modified,
@@ -26,6 +27,7 @@ export async function serverGetQueryById(id: number) {
     return query ? {
         id: query.id,
         query: query.query,
+        keyword: query.keyword,
         state: query.state,
         annotation: query.annotation,
         modified: query.modified,

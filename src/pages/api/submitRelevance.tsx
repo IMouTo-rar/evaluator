@@ -24,8 +24,11 @@ export default async function handlerRelevance(
     return res.status(400).json({ error: 'Missing required fields or incorrect types' });
   }
 
+  const sortedRel = relList.sort((a, b) => b.appScore - a.appScore);
+  const sortedIrr = irrList.sort((a, b) => b.appScore - a.appScore);
+
   try {
-    await updateQueryRelevant("queries", id, relList, irrList, state);
+    await updateQueryRelevant("queries", id, sortedRel, sortedIrr, state);
     return res.status(200).json({ message: 'rerank result updated successfully' });
   } catch (error) {
     // 添加日志输出更新时的错误

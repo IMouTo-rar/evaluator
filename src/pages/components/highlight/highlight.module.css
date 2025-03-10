@@ -1,0 +1,28 @@
+.query {
+    height: var(--header-height);
+    width: 100%;
+    font-size: 1.2rem;
+    color: black;
+    display: flex;
+    align-items: center;
+    grid-column: span 2;
+
+    animation: showQuery 1s cubic-bezier(0.4, 0.0, 0.2, 1) forwards;
+}
+
+/* 定义动画关键帧 */
+@keyframes showQuery {
+    0% {
+        opacity: 0;
+        transform: translateY(0.5rem);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.highlight {
+    font-weight: bold;
+    color: darkred;
+}

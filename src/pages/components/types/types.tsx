@@ -10,11 +10,12 @@ export type Item = {
 
 export type Query = {
   id: number;
-    query: string;
-    state: string;
-    annotation: string;
-    modified: string;
-    relevant: Item[];
-    irrelevant: Item[];
-    rerank: Item[][];
+  query: string;
+  keyword: string;
+  state: string;
+  annotation: string;
+  modified: string;
+  relevant: Item[];
+  irrelevant: Item[];
+  rerank: Item[][];
 }
