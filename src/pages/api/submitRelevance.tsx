@@ -16,11 +16,11 @@ export default async function handlerRelevance(
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
-  const { id, relList, irrList, state } = req.body;
+  const { id, relList, irrList } = req.body;
 
-  if (typeof id !== 'number' || !Array.isArray(relList) || !Array.isArray(irrList) || typeof state !== 'string') {
+  if (typeof id !== 'number' || !Array.isArray(relList) || !Array.isArray(irrList)) {
     // 添加日志输出无效类型
-    console.error("Invalid types for fields:", { id, relList, irrList, state }); 
+    console.error("Invalid types for fields:", { id, relList, irrList }); 
     return res.status(400).json({ error: 'Missing required fields or incorrect types' });
   }
 
@@ -28,7 +28,7 @@ export default async function handlerRelevance(
   const sortedIrr = irrList.sort((a, b) => b.appScore - a.appScore);
 
   try {
-    await updateQueryRelevant("queries", id, sortedRel, sortedIrr, state);
+    await updateQueryRelevant("queries", id, sortedRel, sortedIrr);
     return res.status(200).json({ message: 'rerank result updated successfully' });
   } catch (error) {
     // 添加日志输出更新时的错误

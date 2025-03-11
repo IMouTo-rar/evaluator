@@ -1,8 +1,9 @@
 "use client";
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { monitorForElements } from '@atlaskit/pragmatic-drag-and-drop/element/adapter';
 import { extractClosestEdge } from '@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge';
+import { ToastContainer, Zoom, toast } from 'react-toastify';
 
 import styles from './rerank.module.css';
 
@@ -25,6 +26,48 @@ export default function Rerank({ id, query, rankList }: RerankProps) {
 
   const { setQuery } = useContext(context);
 
+  const storedNotice = () => toast('保存成功');
+
+  const handleSubmit = useCallback((
+    notice: boolean = false,
+  ) => {
+    const data = {
+      id: id,
+      rerankList: rerankList,
+    };
+    fetch('/api/submitRerank', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    })
+      .then(response => response.json())
+      .then(data => {
+        console.log(data)
+        setStored(true);
+        if (notice) { storedNotice(); }
+      })
+      .catch(error => console.error('Error:', error));
+  }, [id, rerankList]);
+
+  const handleStateChange = useCallback((state: string) => {
+    const data = {
+      id: id,
+      state: state,
+    }
+    fetch('/api/submitState', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    })
+      .then(response => response.json())
+      .then(data => console.log(data))
+      .catch(error => console.error('Error:', error));
+  }, [id]);
+
   // 监听 beforeunload 事件
   useEffect(() => {
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
@@ -42,12 +85,12 @@ export default function Rerank({ id, query, rankList }: RerankProps) {
   // 进入 / 退出
   useEffect(() => {
     setQuery(query);
-    handleSubmit(id, rerankList, 'reranking');
+    handleStateChange('reranking');
     return () => {
       setQuery("");
-      handleSubmit(id, rerankList);
+      handleSubmit(false);
     };
-  }, [id, query, rerankList, setQuery]);
+  }, [id, query, rerankList, setQuery, handleSubmit, handleStateChange]);
 
   // 拖拽区
   useEffect(() => {
@@ -109,25 +152,23 @@ export default function Rerank({ id, query, rankList }: RerankProps) {
   }, [rerankList]);
 
   async function handleQuit() {
-    handleSubmit(id, rerankList);
-    setStored(true);
+    handleSubmit();
     router.push(`/#${id}`);
   }
 
   async function handleSave() {
-    handleSubmit(id, rerankList, "reranked");
-    setStored(true);
+    handleSubmit(true);
+    handleStateChange('reranked');
   }
 
   async function handleBack() {
-    handleSubmit(id, rerankList);
-    setStored(true);
+    handleSubmit();
     router.push(`/relevance/${id}`);
   }
 
   function handleDone() {
-    handleSubmit(id, rerankList, "reranked");
-    setStored(true);
+    handleSubmit();
+    handleStateChange('reranked');
     router.push(`/#${id}`);
   }
 
@@ -161,24 +202,20 @@ export default function Rerank({ id, query, rankList }: RerankProps) {
         <button onClick={handleBack}>上一步</button>
         <button onClick={handleDone}>完成</button>
       </div>
+      <ToastContainer
+        position="top-right"
+        autoClose={1000}
+        hideProgressBar
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss={false}
+        draggable={false}
+        pauseOnHover
+        theme="colored"
+        transition={Zoom}
+      />
     </div>
   );
 }
 
-function handleSubmit(id: number, rerankList: ItemType[][], state: string = "") {
-  const data = {
-    id: id,
-    rerankList: rerankList,
-    state: state,
-  };
-  fetch('/api/submitRerank', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(data),
-  })
-    .then(response => response.json())
-    .then(data => console.log(data))
-    .catch((error) => console.error('Error:', error));
-}

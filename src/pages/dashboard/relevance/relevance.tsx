@@ -1,9 +1,10 @@
 "use client";
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { monitorForElements } from '@atlaskit/pragmatic-drag-and-drop/element/adapter';
 import { extractClosestEdge } from '@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge';
 import classNames from 'classnames';
+import { ToastContainer, Zoom, toast } from 'react-toastify';
 
 import { Item as ItemType } from '@/pages/components/types/types';
 import styles from './relevance.module.css';
@@ -25,6 +26,49 @@ export default function Relevance({ id, query, relList }: RelevanceProps) {
 
   const { setQuery } = useContext(context);
 
+  const storedNotice = () => toast('保存成功');
+
+  const handleSubmit = useCallback((
+    notice: boolean = false,
+  ) => {
+    const data = {
+      id: id,
+      relList: rels[0],
+      irrList: rels[1],
+    };
+    fetch('/api/submitRelevance', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    })
+      .then(response => response.json())
+      .then(data => {
+        console.log(data)
+        setStored(true);
+        if (notice) { storedNotice(); }
+      })
+      .catch(error => console.error('Error:', error));
+  }, [id, rels]);
+
+  const handleStateChange = useCallback((state: string) => {
+    const data = {
+      id: id,
+      state: state,
+    }
+    fetch('/api/submitState', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    })
+      .then(response => response.json())
+      .then(data => console.log(data))
+      .catch(error => console.error('Error:', error));
+  }, [id]);
+
   // 监听 beforeunload 事件
   useEffect(() => {
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
@@ -42,12 +86,12 @@ export default function Relevance({ id, query, relList }: RelevanceProps) {
   // 进入 / 退出
   useEffect(() => {
     setQuery(query);
-    handleSubmit(id, rels[0], rels[1], "verifying");
+    handleStateChange("verifying");
     return () => {
       setQuery("");
-      handleSubmit(id, rels[0], rels[1]);
+      handleSubmit();
     };
-  }, [id, query, rels, setQuery]);
+  }, [id, query, rels, setQuery, handleSubmit, handleStateChange]);
 
   // 拖拽区
   useEffect(() => {
@@ -101,19 +145,18 @@ export default function Relevance({ id, query, relList }: RelevanceProps) {
   }, [rels]);
 
   function handleQuit() {
-    handleSubmit(id, rels[0], rels[1]);
-    setStored(true);
+    handleSubmit();
     router.push(`/#${id}`);
   }
 
   function handleSave() {
-    handleSubmit(id, rels[0], rels[1]);
-    setStored(true);
+    handleSubmit(true);
+    handleStateChange("verified");
   }
 
   function handleNext() {
-    handleSubmit(id, rels[0], rels[1], "verified");
-    setStored(true);
+    handleSubmit();
+    handleStateChange("verified");
     router.push(`/rerank/${id}`);
   }
 
@@ -140,25 +183,19 @@ export default function Relevance({ id, query, relList }: RelevanceProps) {
         <button onClick={handleNext}>下一步</button>
         <div className={styles.placeholder}></div>
       </div>
+      <ToastContainer
+        position="top-right"
+        autoClose={1000}
+        hideProgressBar
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss={false}
+        draggable={false}
+        pauseOnHover
+        theme="colored"
+        transition={Zoom}
+      />
     </div>
   );
-}
-
-function handleSubmit(id: number, relList: ItemType[], irrList: ItemType[], state: string = "") {
-  const data = {
-    id: id,
-    relList: relList,
-    irrList: irrList,
-    state: state,
-  };
-  fetch('/api/submitRelevance', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(data),
-  })
-    .then(response => response.json())
-    .then(data => console.log(data))
-    .catch((error) => console.error('Error:', error));
 }

@@ -76,25 +76,17 @@ export async function updateQueryRelevant(
   id: number,
   rel: Item[],
   irr: Item[],
-  state: string
 ) {
   try {
     const client = await initializeClient();
     const query = { id: id };
-    const update = state === ""
-      ? {
-        $set: {
-          relevant: rel,
-          irrelevant: irr,
-        }
+    const update =
+    {
+      $set: {
+        relevant: rel,
+        irrelevant: irr,
       }
-      : {
-        $set: {
-          relevant: rel,
-          irrelevant: irr,
-          state: state,
-        }
-      };
+    }
     const result = await client.db(DB_NAME)
       .collection(collection)
       .updateOne(query, update);
@@ -109,28 +101,40 @@ export async function updateQueryRerank(
   collection: string,
   id: number,
   rerank: Item[][],
-  state: string
 ) {
   try {
     const client = await initializeClient();
     const query = { id: id };
-    const update = state === ""
-      ? {
-        $set: {
-          rerank: rerank,
-        }
-      } : {
-        $set: {
-          rerank: rerank,
-          state: state,
-        }
-      };
+    const update = {
+      $set: {
+        rerank: rerank,
+      }
+    };
     const result = await client.db(DB_NAME)
       .collection(collection)
       .updateOne(query, update);
     return result.acknowledged;
   } catch (error) {
     console.error('Error while updating query rerank:', error);
+    throw error;
+  }
+}
+
+export async function updateQueryState(collection: string, id: number, state: string) {
+  try {
+    const client = await initializeClient();
+    const query = { id: id };
+    const update = {
+      $set: {
+        state: state,
+      }
+    };
+    const result = await client.db(DB_NAME)
+      .collection(collection)
+      .updateOne(query, update);
+    return result.acknowledged;
+  } catch (error) {
+    console.error('Error while updating query state:', error);
     throw error;
   }
 }
