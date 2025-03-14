@@ -26,20 +26,27 @@ export default async function RerankPage({
     ? [...sorted.slice(0, 15), ...sorted.slice(-5)]
     : sorted
 
-  const rankList = query.rerank?.length > 0 && query.state !== "verified"
-    ? query.rerank
-    : createRankList(items, 5);
+  function createRankList<T>(array: T[], size: number): T[][] {
+    const result: T[][] = [];
+    for (let i = 0; i < array.length; i += size) {
+      result.push(array.slice(i, i + size));
+    }
+    return result;
+  }
+
+  const origList = createRankList(items, 5);
+  const rankList = query.rerank;
   const queryStr = query.query;
 
   return (
-    <Rerank id={id} query={queryStr} rankList={rankList} />
+    <Rerank
+      id={id}
+      query={queryStr}
+      rankList={
+        rankList?.length > 0 ? rankList : origList
+      }
+      origList={origList}
+    />
   );
 }
 
-function createRankList<T>(array: T[], size: number): T[][] {
-  const result: T[][] = [];
-  for (let i = 0; i < array.length; i += size) {
-    result.push(array.slice(i, i + size));
-  }
-  return result;
-}

@@ -16,9 +16,10 @@ interface RerankProps {
   id: number;
   query: string;
   rankList: ItemType[][];
+  origList: ItemType[][];
 }
 
-export default function Rerank({ id, query, rankList }: RerankProps) {
+export default function Rerank({ id, query, rankList, origList }: RerankProps) {
   const ref = useRef<HTMLDivElement | null>(null);
   const [rerankList, setRerankList] = useState(rankList);
   const [stored, setStored] = useState(true);
@@ -166,10 +167,14 @@ export default function Rerank({ id, query, rankList }: RerankProps) {
     router.push(`/relevance/${id}`);
   }
 
-  function handleDone() {
+  async function handleDone() {
     handleSubmit();
     handleStateChange('reranked');
     router.push(`/#${id}`);
+  }
+
+  function handleRfsh() {
+    setRerankList(origList);
   }
 
   return (
@@ -198,8 +203,9 @@ export default function Rerank({ id, query, rankList }: RerankProps) {
       </div>
       <div className={styles.buttons}>
         <button onClick={handleQuit}>退出</button>
-        <button onClick={handleSave}>保存</button>
+        <button onClick={handleRfsh}>重置</button>
         <button onClick={handleBack}>上一步</button>
+        <button onClick={handleSave}>保存</button>
         <button onClick={handleDone}>完成</button>
       </div>
       <ToastContainer

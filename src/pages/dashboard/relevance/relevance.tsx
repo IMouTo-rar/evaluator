@@ -179,9 +179,10 @@ export default function Relevance({ id, query, relList }: RelevanceProps) {
       </div>
       <div className={styles.buttons}>
         <button onClick={handleQuit}>退出</button>
+        <div className={styles.placeholder}></div>
+        <button disabled>上一步</button>
         <button onClick={handleSave}>保存</button>
         <button onClick={handleNext}>下一步</button>
-        <div className={styles.placeholder}></div>
       </div>
       <ToastContainer
         position="top-right"
