@@ -35,6 +35,7 @@ export default function Item({ data }: ItemProps) {
   const [state, setState] = useState<'idle' | 'dragging' | 'dragOver' | 'prewview'>('idle');
   const [container, setContainer] = useState<HTMLElement | null>(null);
   const [closestEdge, setClosestEdge] = useState<Edge | null>(null);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const { setInfo, setItem } = useContext(context);
 
@@ -113,8 +114,21 @@ export default function Item({ data }: ItemProps) {
   }, [level, index, item, state]);
 
   function showInfo() {
-    setInfo(true);
     setItem(item);
+    setInfo(true);
+  }
+
+  function handleMouseEnter() { 
+    timeoutRef.current = setTimeout(() => {
+      setItem(item);
+      setInfo(true);
+    }, 500); // 悬浮 1 秒后触发
+  }
+
+  function handleMouseLeave() {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
   }
 
   const classes = classNames(
@@ -136,7 +150,11 @@ export default function Item({ data }: ItemProps) {
       >
         ...
       </div>
-      <div className={styles.image}>
+      <div
+        className={styles.image}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+      >
         <Media name={item.filename} type={item.domain} />
       </div>
       {state === 'prewview' && container && ReactDOM.createPortal(

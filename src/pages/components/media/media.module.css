@@ -3,7 +3,7 @@
     height: var(--item-content);
     display: block;
     border-radius: var(--item-radius);
-    position: relative
+    position: relative;
 }
 
 .image{
