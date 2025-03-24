@@ -19,7 +19,7 @@
     "dotenv": "^16.4.7",
     "mongodb": "^6.14.2",
     "mongoose": "^8.12.1",
-    "next": "15.2.0",
+    "next": "15.2.3",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-toastify": "^11.0.5",
